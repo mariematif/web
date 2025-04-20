@@ -1,0 +1,14 @@
+SMAP
+dashboard_jsp.java
+JSP
+*S JSP
+*F
++ 0 dashboard.jsp
+collaborateur/dashboard.jsp
+*L
+1,2:45
+4,6:48
+9,112:54
+121:166,3
+122,84:169
+*E
