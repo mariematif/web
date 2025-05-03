@@ -1,12 +1,14 @@
 package controller;
 
+import entities.Admin;
+import entities.Collaborateur;
 import entities.User;
 import service.UserService;
 
-import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
+import java.io.IOException;
 
 @WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
@@ -18,47 +20,33 @@ public class LoginServlet extends HttpServlet {
 
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-        String type = request.getParameter("type");
+        String type = request.getParameter("type"); // admin ou collaborateur
 
-        // ✅ Validation de l'email
-        if (email == null || !email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
-            request.setAttribute("error", "Adresse email invalide !");
+        if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
+            request.setAttribute("error", "Champs requis !");
             request.getRequestDispatcher("login.jsp?type=" + type).forward(request, response);
             return;
         }
 
-        // ✅ Validation du mot de passe
-        if (password == null || password.length() < 5) {
-            request.setAttribute("error", "Mot de passe trop court (min 5 caractères) !");
-            request.getRequestDispatcher("login.jsp?type=" + type).forward(request, response);
-            return;
-        }
-
-        // ✅ Authentification via service
         User user = userService.login(email, password);
 
         if (user != null) {
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
 
-            // ✅ Redirection selon le type
-            if ("admin".equalsIgnoreCase(type)) {
+            if ("admin".equals(type) && user instanceof Admin) {
                 response.sendRedirect("admin/dashboard.jsp");
-            } else if ("collaborateur".equalsIgnoreCase(type)) {
+            } else if ("collaborateur".equals(type) && user instanceof Collaborateur) {
                 response.sendRedirect("collaborateur/dashboard.jsp");
             } else {
-                response.sendRedirect("home.jsp");
+                request.setAttribute("error", "Type d'utilisateur incorrect !");
+                request.getRequestDispatcher("login.jsp?type=" + type).forward(request, response);
             }
+
         } else {
-            request.setAttribute("error", "Email ou mot de passe incorrect !");
+            request.setAttribute("error", "Email ou mot de passe invalide !");
             request.getRequestDispatcher("login.jsp?type=" + type).forward(request, response);
         }
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
     }
 
     @Override
@@ -68,7 +56,8 @@ public class LoginServlet extends HttpServlet {
     }
 
     @Override
-    public String getServletInfo() {
-        return "Servlet de connexion avec validation";
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 }

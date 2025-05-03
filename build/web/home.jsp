@@ -11,10 +11,10 @@
             --bg-dark: #121212;
             --text-light: #212121;
             --text-dark: #f1f1f1;
-            --primary-light: #673ab7;
-            --primary-dark: #9575cd;
-            --accent-light: #7e57c2;
-            --accent-dark: #b39ddb;
+            --primary-light: #002f67;
+            --primary-dark: #001b3f;
+            --accent-light: #003a80;
+            --accent-dark: #004488;
         }
 
         body {
@@ -203,6 +203,23 @@
                 display: none;
             }
         }
+        .btn-login {
+    background-color: #002f67;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    width: 100%;
+    font-weight: bold;
+    border-radius: 6px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-login:hover {
+    background-color: #014494;
+    transform: scale(1.03);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
     </style>
 </head>
 <body>
@@ -214,6 +231,7 @@
         <a href="#fonctionnalites">Fonctionnalités</a>
         <a href="#about">À propos</a>
         <a href="#contact">Contact</a>
+         <a href="register.jsp"> S'inscrire</a>
         <button class="dark-toggle" onclick="toggleDarkMode()">🌙 Mode sombre</button>
     </nav>
 </header>
@@ -222,12 +240,13 @@
 <div class="container">
     <div class="left">
         <h1>Organisateur des tâches</h1>
-        <p>Organisez votre travail facilement grâce à notre application. Choisissez votre espace :</p>
-        <a class="btn" href="login.jsp?type=admin">Connexion Admin</a>
-        <a class="btn" href="login.jsp?type=collaborateur">Connexion Collaborateur</a>
+        <p>Organisez votre travail facilement grâce à notre application. Cliquez ci-dessous pour vous connecter :</p>
+     <a href="login.jsp?type=admin" class="btn btn-login">🔐 Connexion Admin</a>
+<a href="login.jsp?type=collaborateur" class="btn btn-login">👤 Connexion Collaborateur</a>
+
     </div>
     <div class="right">
-        <img src="assets/img.png" alt="Illustration" />
+        <img src="img/img1.jpg" alt="Illustration" />
     </div>
 </div>
 

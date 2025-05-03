@@ -1,8 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="entities.User" %>
+<%@ page import="entities.Collaborateur" %>
 <%
     User user = (User) session.getAttribute("user");
-    if (user == null) {
+    if (user == null || !(user instanceof Collaborateur)) {
         response.sendRedirect("../login.jsp");
         return;
     }
@@ -17,25 +18,18 @@
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             background-color: #f4f4f4;
         }
-
         header {
-            background: linear-gradient(to right, #5e35b1, #7e57c2);
+            background: linear-gradient(to right, #002f67, #003a80);
             color: white;
             padding: 20px 50px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-
-        .logo {
-            font-size: 26px;
-            font-weight: bold;
-        }
-
+        .logo { font-size: 26px; font-weight: bold; }
         nav a {
             margin-left: 30px;
             text-decoration: none;
@@ -43,19 +37,9 @@
             font-weight: 500;
             transition: 0.3s;
         }
-
-        nav a:hover {
-            text-decoration: underline;
-        }
-
-        .container {
-            padding: 40px 60px;
-        }
-
-        h2 {
-            color: #333;
-        }
-
+        nav a:hover { text-decoration: underline; }
+        .container { padding: 40px 60px; }
+        h2 { color: #002f67; }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -63,31 +47,22 @@
             background: white;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-
         th, td {
             padding: 14px;
             text-align: center;
             border-bottom: 1px solid #ddd;
         }
-
-        th {
-            background-color: #eee;
-        }
-
+        th { background-color: #eee; }
         .btn {
             padding: 6px 12px;
-            background-color: #673ab7;
+            background-color: #002f67;
             border: none;
             color: white;
             font-weight: bold;
             border-radius: 5px;
             cursor: pointer;
         }
-
-        .btn:hover {
-            background-color: #5e35b1;
-        }
-
+        .btn:hover { background-color: #004488; }
         .chart-container {
             margin-top: 60px;
             background: white;
@@ -95,7 +70,6 @@
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-
         footer {
             text-align: center;
             padding: 20px;
@@ -110,9 +84,9 @@
 <header>
     <div class="logo">Gestionnaire de Tâches</div>
     <nav>
-        <a href="dashboard_collaborateur.jsp">Accueil</a>
-        <a href="#">Mes Tâches</a>
-        <a href="#">Profil</a>
+        <a href="home.jsp">Accueil</a>
+        <a href="${pageContext.request.contextPath}/CollaborateurMesTaches">📌 Mes Tâches</a>
+        <a href="profil.jsp">Profil</a>
         <a href="../LogoutServlet">Déconnexion</a>
     </nav>
 </header>
@@ -126,25 +100,13 @@
                 <th>Projet</th>
                 <th>Titre</th>
                 <th>Description</th>
+                <th>Catégorie</th>
                 <th>État</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody id="tacheTable">
-            <tr>
-                <td>Projet Java</td>
-                <td>Connexion sécurisée</td>
-                <td>Créer formulaire avec validation</td>
-                <td id="etat-1">To Do</td>
-                <td><button class="btn" onclick="changerEtat(1)">Changer</button></td>
-            </tr>
-            <tr>
-                <td>Projet Web</td>
-                <td>Dashboard collaborateur</td>
-                <td>UI avec statistiques et AJAX</td>
-                <td id="etat-2">En cours</td>
-                <td><button class="btn" onclick="changerEtat(2)">Changer</button></td>
-            </tr>
+            <!-- Les lignes seront remplies par AJAX -->
         </tbody>
     </table>
 
@@ -159,45 +121,63 @@
 </footer>
 
 <script>
-    // Exemple : graphique statique
+function chargerTaches() {
+    $.getJSON('${pageContext.request.contextPath}/CollaborateurTachesAPI', function(data) {
+        let rows = '';
+        data.taches.forEach(t => {
+            rows += `
+                <tr>
+                    <td>${t.projet}</td>
+                    <td>${t.titre}</td>
+                    <td>${t.description}</td>
+                    <td>${t.categorie}</td>
+                    <td id="etat-${t.id}">${t.etat}</td>
+                    <td><button class="btn" onclick="changerEtat(${t.id})">Changer</button></td>
+                </tr>`;
+        });
+        $('#tacheTable').html(rows);
+    });
+}
+
+function changerEtat(id) {
+    const cell = document.getElementById('etat-' + id);
+    const actuel = cell.innerText.trim();
+    const suivant = (actuel === 'To Do') ? 'En cours' :
+                    (actuel === 'En cours') ? 'Terminé' : 'To Do';
+    cell.innerText = suivant;
+
+    // Optionnel : envoie AJAX vers servlet (ex: TacheEtatServlet)
+    /*
+    $.post('TacheEtatServlet', { id: id, nouvelEtat: suivant }, function() {
+        alert("État mis à jour !");
+    });
+    */
+}
+
+function chargerChart() {
     const ctx = document.getElementById('progressionChart').getContext('2d');
-    const chart = new Chart(ctx, {
+    new Chart(ctx, {
         type: 'bar',
         data: {
             labels: ['Projet Java', 'Projet Web'],
             datasets: [{
                 label: '% Tâches Terminées',
-                data: [40, 75],
-                backgroundColor: ['#7e57c2', '#9575cd']
+                data: [40, 75], // À rendre dynamique plus tard
+                backgroundColor: ['#003a80', '#004488']
             }]
         },
         options: {
             scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100
-                }
+                y: { beginAtZero: true, max: 100 }
             }
         }
     });
+}
 
-    // AJAX simulé pour changer l'état
-    function changerEtat(id) {
-        const etat = document.getElementById('etat-' + id);
-        const actuel = etat.innerText;
-
-        const suivant = (actuel === 'To Do') ? 'En cours' :
-                        (actuel === 'En cours') ? 'Terminé' : 'To Do';
-
-        etat.innerText = suivant;
-
-        // TODO: Implémenter un appel AJAX réel si besoin
-        /*
-        $.post("TacheEtatController", { id: id, nouvelEtat: suivant }, function(response) {
-            // traitement après maj
-        });
-        */
-    }
+$(document).ready(function () {
+    chargerTaches();
+    chargerChart();
+});
 </script>
 
 </body>

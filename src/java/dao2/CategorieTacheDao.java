@@ -7,12 +7,17 @@ package dao2;
 
 import entities.CategorieTache;
 
+
 /**
  *
  * @author Hp
  */
 public class CategorieTacheDao extends AbstractDao<CategorieTache> {
+
     public CategorieTacheDao() {
         super(CategorieTache.class);
     }
-}
+
+  
+    }
+

@@ -54,10 +54,10 @@ public final class home_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("            --bg-dark: #121212;\n");
       out.write("            --text-light: #212121;\n");
       out.write("            --text-dark: #f1f1f1;\n");
-      out.write("            --primary-light: #673ab7;\n");
-      out.write("            --primary-dark: #9575cd;\n");
-      out.write("            --accent-light: #7e57c2;\n");
-      out.write("            --accent-dark: #b39ddb;\n");
+      out.write("            --primary-light: #002f67;\n");
+      out.write("            --primary-dark: #001b3f;\n");
+      out.write("            --accent-light: #003a80;\n");
+      out.write("            --accent-dark: #004488;\n");
       out.write("        }\n");
       out.write("\n");
       out.write("        body {\n");

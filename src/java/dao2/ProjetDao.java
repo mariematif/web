@@ -11,8 +11,10 @@ import entities.Projet;
  *
  * @author Hp
  */
-public class ProjetDao extends AbstractDao<Projet>{
-     public ProjetDao() {
+public class ProjetDao extends AbstractDao<Projet> {
+
+    public ProjetDao() {
         super(Projet.class);
     }
+   
 }

@@ -7,14 +7,17 @@ package dao2;
 
 import entities.Admin;
 
+
 /**
  *
  * @author Hp
  */
-public class AdminDao extends AbstractDao<Admin>{
-
-    public AdminDao(Class<Admin> clazz) {
-        super(clazz);
+public class AdminDao extends AbstractDao<Admin> {
+    public AdminDao() {
+        super(Admin.class);
     }
-    
 }
+
+
+    
+
